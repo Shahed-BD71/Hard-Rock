@@ -1,0 +1,88 @@
+    // in fetch way.
+const searchSongs = () => {
+    const searchText = document.getElementById('search-field').value;
+    const url = `https://api.lyrics.ovh/suggest/${searchText}`
+    // load data
+    fetch(url)
+    .then(res => res.json())
+    .then(data => displaySong(data.data))
+    .catch(error => displayError('Something Wrong, Please Try again Later.'))
+}
+
+//     // in async-await way.
+// const searchSongs = async() => {
+//     const searchText = document.getElementById('search-field').value;
+//     const url = `https://api.lyrics.ovh/suggest/${searchText}`
+//     // load data
+//     const res = await fetch(url)
+//     const data = await res.json()
+//     displaySong(data.data)
+// }
+
+
+    // display song.
+const displaySong = songs => {
+    const songContainer = document.getElementById('song-container');
+    songContainer.innerHTML = " ";
+    songs.forEach(song => {
+       const songDiv = document.createElement('div')
+       songDiv.className = "single-result row align-items-center my-3 p-3"
+       songDiv.innerHTML = `
+       <div class="col-md-9">
+            <h3 class="lyrics-name">${song.title}</h3>
+            <p class="author lead">Album by <span>${song.artist.name}</span></p>
+            <audio controls>
+                <source src="${song.preview}" type="audio/ogg">
+            </audio>
+       </div>
+        <div class="col-md-3 text-md-right text-center">
+            <button onclick = "getLyric('${song.artist.name}','${song.title}')" class="btn btn-success">Get Lyrics</button>
+        </div>`
+        songContainer.appendChild(songDiv);
+    });
+}
+
+
+
+     // in fetch way.
+// const getLyric = (artist, title) => {
+//     url = `https://api.lyrics.ovh/v1/${artist}/${title}`
+
+//     // load lyrics
+//     fetch(url)
+//     .then(res => res.json())
+//     .then(data => displayLyrics(data.lyrics))
+// }
+//     // display lyrics
+// const displayLyrics = lyrics => {
+//     lyricsDiv = document.getElementById('song-lyrics');
+//     lyricsDiv.innerText = lyrics;
+// }
+
+
+    // in async-await way.
+const getLyric = async(artist, title) => {
+    url = `https://api.lyrics.ovh/v1/${artist}/${title}`
+
+    // load lyrics
+    try {
+        const res = await fetch(url)
+        const data = await res.json()
+        displayLyrics(data.lyrics)   
+    } catch (error) {
+        displayError("Failed to load Data,Please try again later.")
+    }
+    // const res = await fetch(url)
+    // const data = await res.json()
+    // displayLyrics(data.lyrics)
+}
+    // display lyrics
+const displayLyrics = lyrics => {
+    lyricsDiv = document.getElementById('song-lyrics');
+    lyricsDiv.innerText = lyrics;
+}
+
+const displayError = error => {
+    const errorText = document.getElementById('error-text');
+    errorText.innerText = error;
+}
